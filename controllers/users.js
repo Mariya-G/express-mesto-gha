@@ -12,7 +12,7 @@ const createUser = (req, res) => {
     .then((dataUser) => res.status(CREATED).send(dataUser))
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        return res.status(BAD_REQUEST).send({ message: 'Пользователь не создан' });
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя' });
       }
       return res.status(ERROR_CODE).send({ message: 'На сервере произошла ошибка' });
     });
@@ -29,7 +29,7 @@ const getUser = (req, res) => {
   return userModal.findById(userID)
     .then((user) => {
       if (user === null) {
-        return res.status(NOT_FOUND).send({ message: 'Пользователь не найден или был запрошен несуществующий роут' });
+        return res.status(NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден.' });
       }
       return res.status(OK).send(user);
     })
@@ -48,11 +48,16 @@ const updateUser = (req, res) => {
   userModal.findByIdAndUpdate(userID, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (user === null) {
-        return res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
+        return res.status(NOT_FOUND).send({ message: 'Пользователь с указанным _id не найден' });
       }
       return res.send({ data: user });
     })
-    .catch(() => res.status(ERROR_CODE).send({ message: 'На сервере произошла ошибка' }));
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+      }
+      return res.status(ERROR_CODE).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const updateAvatar = (req, res) => {
@@ -61,7 +66,13 @@ const updateAvatar = (req, res) => {
   const userID = req.user._id;
   userModal.findByIdAndUpdate(userID, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(ERROR_CODE).send({ message: 'На сервере произошла ошибка' }));
+    .catch((error) => {
+      console.log(error);
+      if (error.name === 'ValidationError') {
+        return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении аватара' });
+      }
+      return res.status(ERROR_CODE).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 module.exports = {
