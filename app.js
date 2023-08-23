@@ -23,7 +23,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
   res.status(404).send({ message: '<h1>Страница не найдена</h1>' });
 });
 
