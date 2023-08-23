@@ -53,11 +53,11 @@ const likeCard = (req, res) => cardModal.findByIdAndUpdate(
     if (card) {
       return res.status(OK).send({ data: card });
     }
-    return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для постановки лайка' });
+    return res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
   })
   .catch((error) => {
     if (error.name === 'CastError') {
-      return res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
+      return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для постановки лайка' });
     }
     return res.status(ERROR_CODE).send({ message: 'На сервере произошла ошибка' });
   });
@@ -72,11 +72,11 @@ const dislikeCard = (req, res) => cardModal.findByIdAndUpdate(
     if (card) {
       return res.status(OK).send({ data: card });
     }
-    return res.status(BAD_REQUEST).send({ message: ' Переданы некорректные данные при снятии лайка' });
+    return res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
   })
   .catch((error) => {
     if (error.name === 'CastError') {
-      res.status(NOT_FOUND).send({ message: 'Передан несуществующий _id карточки' });
+      return res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные для постановки лайка' });
     }
     return res.status(ERROR_CODE).send({ message: 'На сервере произошла ошибка' });
   });
