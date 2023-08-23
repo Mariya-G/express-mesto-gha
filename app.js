@@ -14,6 +14,10 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 
 app.use(express.json());
 
+app.get('*', (req, res) => {
+  res.status(404).send({ message: '<h1>Страница не найдена</h1>' });
+});
+
 // Временная авторизация
 app.use((req, res, next) => {
   req.user = {
@@ -24,9 +28,5 @@ app.use((req, res, next) => {
 });
 
 app.use(router);
-
-app.get('*', (req, res) => {
-  res.status(404).send({ message: '<h1>Страница не найдена</h1>' });
-});
 
 app.listen(PORT, () => console.log(`Подключен: ${PORT}`));
