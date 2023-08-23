@@ -23,10 +23,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(router);
+
 app.get('*', (req, res) => {
   res.status(404).send({ message: '<h1>Страница не найдена</h1>' });
 });
-
-app.use(router);
 
 app.listen(PORT, () => console.log(`Подключен: ${PORT}`));
