@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 app.use(router);
 
 app.get('*', (req, res) => {
-  res.status(404).send({ message: '<h1>Страница не найдена</h1>' });
+  res.status(404).send({ message: 'Страница не найдена' });
 });
 
 app.listen(PORT, () => console.log(`Подключен: ${PORT}`));
