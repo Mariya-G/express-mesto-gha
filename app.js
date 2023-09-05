@@ -1,28 +1,25 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const auth = require('./middlewares/auth');
+const { login, createUser } = require('./controllers/users');
+
+const ServerError = require('./errors/server_error');
 
 const router = require('./routes');
 
-const { PORT = 3000 } = process.env;
 const app = express();
 
 // Подключение БД
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
-  useNewUrlParser: true,
-})
-  .then(() => console.log('Подключено'));
+const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
+mongoose.connect(DB_URL);
 
 app.use(express.json());
 
-// Временная авторизация
-app.use((req, res, next) => {
-  req.user = {
-    _id: '64de21757d06510178952e60',
-  };
-
-  next();
-});
-
+app.post('/signin', login);
+app.post('/signup', createUser);
+app.use(auth);
 app.use(router);
+
+app.use(ServerError);
 
 app.listen(PORT, () => console.log(`Подключен: ${PORT}`));
