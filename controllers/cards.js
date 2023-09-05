@@ -31,8 +31,15 @@ const getCards = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   cardModal.findByIdAndRemove(req.params.cardId)
+    .orFail(new NotFound('Карточка не найдена'))
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
+        throw new Forbidden('Нельзя удалить чужую карточку');
+      }
+      return res.status(OK).send({ data: card });
+    })
+    .then((card) => {
+      if (card === null) {
         throw new Forbidden('Нельзя удалить чужую карточку');
       }
       return res.status(OK).send({ data: card });
