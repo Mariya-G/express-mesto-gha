@@ -4,7 +4,6 @@ const userModal = require('../models/user');
 
 const NotFound = require('../errors/not_found'); // 404
 const Conflict = require('../errors/conflict'); // 409
-const Forbidden = require('../errors/forbidden'); // 403
 const BadRequest = require('../errors/bad-request'); // 400
 
 const SALT_ROUNDS = 10;
@@ -21,7 +20,7 @@ const login = (req, res, next) => {
   return userModal.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new Forbidden('Такого пользователя не существует');
+        throw new BadRequest('Такого пользователя не существует');
       }
 
       bcrypt.compare(password, user.password, (error, isValid) => {
@@ -58,7 +57,7 @@ const createUser = (req, res, next) => {
     // eslint-disable-next-line no-shadow
     .catch((error) => {
       if (error.name === 'ValidationError') {
-        next(new BadRequest('Передан неверный логин или пароль'));
+        next(new BadRequest('Переданы некорректные данные пользователя'));
       }
       next(error);
     }));
