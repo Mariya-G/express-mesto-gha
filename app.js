@@ -1,5 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
+
+const { errors } = require('celebrate');
+
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 
@@ -19,7 +22,7 @@ app.post('/signin', login);
 app.post('/signup', createUser);
 app.use(auth);
 app.use(router);
-
+app.use(errors());
 app.use(ServerError);
 
 app.listen(PORT, () => console.log(`Подключен: ${PORT}`));
