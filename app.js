@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const { errors } = require('celebrate');
-const { validateAuthorize, validateInfoUser } = require('./middlewares/validators');
+const { validateAuth, validateInfoUser } = require('./middlewares/validators');
 
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
@@ -20,7 +20,7 @@ mongoose.connect(DB_URL);
 app.use(express.json());
 
 app.post('/signup', validateInfoUser, createUser);
-app.post('/signin', validateAuthorize, login);
+app.post('/signin', validateAuth, login);
 
 app.use(auth);
 app.use(router);

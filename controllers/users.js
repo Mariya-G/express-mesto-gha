@@ -92,22 +92,6 @@ const getUser = (req, res, next) => {
     });
 };
 
-// const getUser = (req, res, next) => {
-//   const { userID } = req.params;
-//   return userModal.findById(userID)
-//     .orFail(new NotFound('Пользователь не найден'))
-//     .then((user) => {
-//       res.send(user);
-//     })
-//     .catch((err) => {
-//       if (err.name === 'CastError') {
-//         next(new NotFound('Некорректный Id пользователя'));
-//       } else {
-//         next(err);
-//       }
-//     });
-// };
-
 const getAuthUser = (req, res, next) => {
   userModal.findById(req.user._id)
     .then((user) => {
