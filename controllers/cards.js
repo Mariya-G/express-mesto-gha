@@ -30,7 +30,7 @@ const getCards = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  cardModal.findByIdAndRemove(req.params.cardId)
+  cardModal.findById(req.params.cardId)
     .orFail(new NotFound('Карточка не найдена'))
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
@@ -72,7 +72,6 @@ const likeCard = (req, res, next) => cardModal.findByIdAndUpdate(
 
 const dislikeCard = (req, res, next) => cardModal.findByIdAndUpdate(
   req.params.cardId,
-  // eslint-disable-next-line no-underscore-dangle
   { $pull: { likes: req.user._id } },
   { new: true },
 )

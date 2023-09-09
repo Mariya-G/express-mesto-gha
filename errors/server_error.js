@@ -1,5 +1,6 @@
 const ServerError = (err, req, res, next) => {
-  res.status(err.statusCode).send({ message: err.message });
+  console.error(`(${err.statusCode}) ${err.message}`);
+  res.send({ message: 'На сервере произошла ошибка' });
   next();
 };
 
