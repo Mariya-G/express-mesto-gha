@@ -53,7 +53,9 @@ const createUser = (req, res, next) => {
       return userModal.create({
         name, about, avatar, email, password: hash,
       })
-        .then(() => res.status(CREATED).send({ message: `Пользователь ${email} зарегестрирован` }));
+        .then((data) => res.status(CREATED).send({
+          email: data.email, name: data.name, about: data.about, avatar: data.avatar,
+        }));
     })
     // eslint-disable-next-line no-shadow
     .catch((error) => {
