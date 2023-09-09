@@ -5,6 +5,7 @@ const userModal = require('../models/user');
 const NotFound = require('../errors/not_found'); // 404
 const Conflict = require('../errors/conflict'); // 409
 const BadRequest = require('../errors/bad-request'); // 400
+const ErrorAuth = require('../errors/err_auth');
 
 const SALT_ROUNDS = 10;
 const JWT_SECRET = 'some-secret-key';
@@ -20,7 +21,7 @@ const login = (req, res, next) => {
   return userModal.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new BadRequest('Такого пользователя не существует');
+        throw new ErrorAuth('Такого пользователя не существует');
       }
 
       bcrypt.compare(password, user.password, (error, isValid) => {
@@ -58,8 +59,11 @@ const createUser = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные пользователя'));
+      } else if (error.code === 11000) {
+        next(new Conflict('Такой пользователь уже существует!'));
+      } else {
+        next(error);
       }
-      next(error);
     }));
 };
 
