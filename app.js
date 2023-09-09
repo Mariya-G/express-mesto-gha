@@ -19,8 +19,9 @@ mongoose.connect(DB_URL);
 
 app.use(express.json());
 
-app.post('/signin', validateAuthorize, login);
 app.post('/signup', validateInfoUser, createUser);
+app.post('/signin', validateAuthorize, login);
+
 app.use(auth);
 app.use(router);
 app.use(errors());

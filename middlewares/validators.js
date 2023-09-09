@@ -1,6 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
 
-const regexUrl = /https?:\/\/(www\.)?[-\w@:%.+~#=]{1,256}\.[a-z0-9()]{1,6}\b([-\w()@:%.+~#=/?&]*)/i;
+const url = /https?:\/\/(www\.)?[-\w@:%.+~#=]{1,256}\.[a-z0-9()]{1,6}\b([-\w()@:%.+~#=/?&]*)/i;
 
 const validateAuthorize = celebrate({
   body: Joi.object().keys({
@@ -13,7 +13,7 @@ const validateInfoUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(regexUrl),
+    avatar: Joi.string().pattern(url),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
@@ -28,20 +28,20 @@ const validateUpdateUser = celebrate({
 
 const validateUserAvatar = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(regexUrl).required(),
+    avatar: Joi.string().pattern(url).required(),
   }),
 });
 
 const validateCardInfo = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().pattern(regexUrl),
+    link: Joi.string().required().pattern(url),
   }),
 });
 
 const validateId = celebrate({
   params: Joi.object().keys({
-    id: Joi.string().hex().length(24).required(),
+    userID: Joi.string().hex().length(24).required(),
   }),
 });
 

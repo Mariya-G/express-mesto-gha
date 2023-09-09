@@ -84,10 +84,34 @@ const getUser = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new BadRequest('Переданы некорректные данные пользователя'));
+        next(new NotFound('Переданы некорректные данные пользователя'));
       }
       next(error);
     });
+};
+
+// const getUser = (req, res, next) => {
+//   const { userID } = req.params;
+//   return userModal.findById(userID)
+//     .orFail(new NotFound('Пользователь не найден'))
+//     .then((user) => {
+//       res.send(user);
+//     })
+//     .catch((err) => {
+//       if (err.name === 'CastError') {
+//         next(new NotFound('Некорректный Id пользователя'));
+//       } else {
+//         next(err);
+//       }
+//     });
+// };
+
+const getAuthUser = (req, res, next) => {
+  userModal.findById(req.user._id)
+    .then((user) => {
+      res.send(user);
+    })
+    .catch(next);
 };
 
 const updateUser = (req, res, next) => {
@@ -126,6 +150,7 @@ module.exports = {
   login,
   createUser,
   getUser,
+  getAuthUser,
   getUsers,
   updateUser,
   updateAvatar,
