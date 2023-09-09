@@ -5,7 +5,7 @@ const userModal = require('../models/user');
 const NotFound = require('../errors/not_found'); // 404
 const Conflict = require('../errors/conflict'); // 409
 const BadRequest = require('../errors/bad-request'); // 400
-const ErrorAuth = require('../errors/err_auth');
+// const ErrorAuth = require('../errors/err_auth'); // 401
 
 const SALT_ROUNDS = 10;
 const JWT_SECRET = 'some-secret-key';
@@ -17,10 +17,6 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return userModal.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        throw new ErrorAuth('Такого пользователя не существует');
-      }
-
       bcrypt.compare(password, user.password, () => {
         const token = jwt.sign({ _id: user.id }, JWT_SECRET, { expiresIn: '7d' });
         return res.status(OK).cookie('jwt', token, {
