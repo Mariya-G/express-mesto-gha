@@ -5,7 +5,6 @@ const userModal = require('../models/user');
 const NotFound = require('../errors/not_found'); // 404
 const Conflict = require('../errors/conflict'); // 409
 const BadRequest = require('../errors/bad-request'); // 400
-// const ErrorAuth = require('../errors/err_auth'); // 401
 
 const SALT_ROUNDS = 10;
 const JWT_SECRET = 'some-secret-key';
@@ -17,12 +16,10 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return userModal.findUserByCredentials(email, password)
     .then((user) => {
-      bcrypt.compare(password, user.password, () => {
-        const token = jwt.sign({ _id: user.id }, JWT_SECRET, { expiresIn: '7d' });
-        return res.status(OK).cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: 'none', secure: true,
-        }).send({ message: token });
-      });
+      const token = jwt.sign({ _id: user.id }, JWT_SECRET, { expiresIn: '7d' });
+      return res.status(OK).cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: 'none', secure: true,
+      }).send({ token });
     })
     .catch(next);
 };
@@ -67,8 +64,9 @@ const getUser = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'CastError') {
         next(new NotFound('Переданы некорректные данные пользователя'));
+      } else {
+        next(error);
       }
-      next(error);
     });
 };
 
@@ -103,12 +101,18 @@ const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const userID = req.user._id;
   userModal.findByIdAndUpdate(userID, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (user === null) {
+        throw new NotFound('Пользователь по указанному _id не найден.');
+      }
+      return res.send({ data: user });
+    })
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new BadRequest('Переданы некорректные данные при обновлении аватара'));
+      } else {
+        next(error);
       }
-      next(error);
     });
 };
 
