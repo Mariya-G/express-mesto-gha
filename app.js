@@ -1,6 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const cookieParser = require('cookie-parser');
+
 const { errors } = require('celebrate');
 const { validateAuth, validateInfoUser } = require('./middlewares/validators');
 
@@ -18,6 +20,7 @@ const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.en
 mongoose.connect(DB_URL);
 
 app.use(express.json());
+app.use(cookieParser());
 app.post('/signup', validateInfoUser, createUser);
 app.post('/signin', validateAuth, login);
 
