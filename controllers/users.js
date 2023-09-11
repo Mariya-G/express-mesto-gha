@@ -59,9 +59,10 @@ const getUser = (req, res, next) => {
   return userModal.findById(userID)
     .then((user) => {
       if (user === null) {
-        throw new NotFound('Пользователь по указанному _id не найден.');
+        next(new NotFound('Пользователь по указанному _id не найден.'));
+      } else {
+        res.status(OK).send(user);
       }
-      return res.status(OK).send(user);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
@@ -86,9 +87,10 @@ const updateUser = (req, res, next) => {
   userModal.findByIdAndUpdate(userID, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (user === null) {
-        throw new NotFound('Пользователь по указанному _id не найден.');
+        next(new NotFound('Пользователь по указанному _id не найден.'));
+      } else {
+        res.send({ data: user });
       }
-      return res.send({ data: user });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
@@ -105,9 +107,10 @@ const updateAvatar = (req, res, next) => {
   userModal.findByIdAndUpdate(userID, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (user === null) {
-        throw new NotFound('Пользователь по указанному _id не найден.');
+        next(new NotFound('Пользователь по указанному _id не найден.'));
+      } else {
+        res.send({ data: user });
       }
-      return res.send({ data: user });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {

@@ -36,9 +36,9 @@ const deleteCard = (req, res, next) => {
     .orFail(new NotFound('Карточка не найдена'))
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
-        throw new Forbidden('Нельзя удалить чужую карточку');
+        next(new Forbidden('Нельзя удалить чужую карточку'));
       } else {
-        return card.deleteOne()
+        card.deleteOne()
           .then(() => res.send(card));
       }
     })
@@ -58,9 +58,10 @@ const likeCard = (req, res, next) => cardModal.findByIdAndUpdate(
 )
   .then((card) => {
     if (card) {
-      return res.status(OK).send({ data: card });
+      res.status(OK).send({ data: card });
+    } else {
+      next(new NotFound('Передан несуществующий _id карточки'));
     }
-    throw new NotFound('Передан несуществующий _id карточки');
   })
   .catch((error) => {
     if (error.name === 'CastError') {
@@ -77,9 +78,10 @@ const dislikeCard = (req, res, next) => cardModal.findByIdAndUpdate(
 )
   .then((card) => {
     if (card) {
-      return res.status(OK).send({ data: card });
+      res.status(OK).send({ data: card });
+    } else {
+      next(new NotFound('Передан несуществующий _id карточки'));
     }
-    throw new NotFound('Передан несуществующий _id карточки');
   })
   .catch((error) => {
     if (error.name === 'CastError') {
