@@ -5,7 +5,7 @@ const ErrorAuth = require('../errors/err_auth');
 const JWT_SECRET = 'some-secret-key';
 
 const auth = (req, res, next) => {
-  const token = req.cookies;
+  const token = req.cookies.jwt;
   let payload;
   try {
     payload = jwt.verify(token, JWT_SECRET);
