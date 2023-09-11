@@ -17,7 +17,7 @@ const login = (req, res, next) => {
   return userModal.findUserByCredentials(email, password)
     .then((user) => {
       bcrypt.compare(password, user.password, () => {
-        const token = jwt.sign({ _id: user.id }, JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
         return res.status(OK).cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: 'none', secure: true,
         }).send({ token });
