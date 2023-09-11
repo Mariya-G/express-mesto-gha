@@ -29,4 +29,4 @@ app.use(router);
 app.use(errors());
 app.use(ServerError);
 
-app.listen(PORT, () => console.log(`Подключен: ${PORT}`));
+app.listen(PORT, () => console.log(`Подключено: ${PORT}`));
