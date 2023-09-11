@@ -13,21 +13,18 @@ const OK = 200;
 const CREATED = 201;
 
 const login = (req, res, next) => {
-  console.log(req.cookies.jwt);
   const { email, password } = req.body;
   return userModal.findUserByCredentials(email, password)
     .then((user) => {
-      bcrypt.compare(password, user.password, () => {
-        const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-        return res.status(OK).cookie('jwt', token, {
-          httpOnly: true, sameSite: 'none', secure: true,
-        }).send({
-          email: user.email,
-          _id: user._id,
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-        });
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      return res.status(OK).cookie('jwt', token, {
+        httpOnly: true, sameSite: 'none', secure: true,
+      }).send({
+        email: user.email,
+        _id: user._id,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
       });
     })
     .catch(next);
@@ -61,21 +58,36 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
+// const getUser = (req, res, next) => {
+//   const { userID } = req.params;
+//   return userModal.findById(userID)
+//     .then((user) => {
+//       if (user === null) {
+//         next(new NotFound('Пользователь по указанному _id не найден.'));
+//       } else {
+//         res.status(OK).send(user);
+//       }
+//     })
+//     .catch((error) => {
+//       if (error.name === 'CastError') {
+//         next(new NotFound('Переданы некорректные данные пользователя'));
+//       } else {
+//         next(error);
+//       }
+//     });
+// };
+
 const getUser = (req, res, next) => {
-  const { userID } = req.params;
-  return userModal.findById(userID)
+  userModal.findById(req.params.id)
+    .orFail(new NotFound('Пользователь не найден'))
     .then((user) => {
-      if (user === null) {
-        next(new NotFound('Пользователь по указанному _id не найден.'));
-      } else {
-        res.status(OK).send(user);
-      }
+      res.status(OK).send(user);
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        next(new NotFound('Переданы некорректные данные пользователя'));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequest('Некорректный Id пользователя'));
       } else {
-        next(error);
+        next(err);
       }
     });
 };
