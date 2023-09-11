@@ -13,13 +13,14 @@ const OK = 200;
 const CREATED = 201;
 
 const login = (req, res, next) => {
+  console.log(req.cookies.jwt);
   const { email, password } = req.body;
   return userModal.findUserByCredentials(email, password)
     .then((user) => {
       bcrypt.compare(password, user.password, () => {
         const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
         return res.status(OK).cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: 'none', secure: true,
+          httpOnly: true, sameSite: 'none', secure: true,
         }).send({ token });
       });
     })
