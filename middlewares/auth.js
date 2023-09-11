@@ -6,6 +6,7 @@ const JWT_SECRET = 'some-secret-key';
 
 const auth = (req, res, next) => {
   const token = req.cookies.jwt;
+  console.log(token);
   let payload;
   try {
     payload = jwt.verify(token, JWT_SECRET);
