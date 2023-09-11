@@ -18,7 +18,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
       return res.status(OK).cookie('jwt', token, {
-        httpOnly: true, sameSite: 'none', secure: true,
+        maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: 'none', secure: true,
       }).send({
         email: user.email,
         _id: user._id,
@@ -58,36 +58,21 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-// const getUser = (req, res, next) => {
-//   const { userID } = req.params;
-//   return userModal.findById(userID)
-//     .then((user) => {
-//       if (user === null) {
-//         next(new NotFound('Пользователь по указанному _id не найден.'));
-//       } else {
-//         res.status(OK).send(user);
-//       }
-//     })
-//     .catch((error) => {
-//       if (error.name === 'CastError') {
-//         next(new NotFound('Переданы некорректные данные пользователя'));
-//       } else {
-//         next(error);
-//       }
-//     });
-// };
-
 const getUser = (req, res, next) => {
-  userModal.findById(req.params.id)
-    .orFail(new NotFound('Пользователь не найден'))
+  const { userID } = req.params;
+  return userModal.findById(userID)
     .then((user) => {
-      res.status(OK).send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequest('Некорректный Id пользователя'));
+      if (user === null) {
+        next(new NotFound('Пользователь по указанному _id не найден.'));
       } else {
-        next(err);
+        res.send(user);
+      }
+    })
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        next(new NotFound('Переданы некорректные данные пользователя'));
+      } else {
+        next(error);
       }
     });
 };
