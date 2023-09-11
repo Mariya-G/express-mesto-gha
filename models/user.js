@@ -4,6 +4,7 @@ const validator = require('validator');
 const ErrorAuth = require('../errors/err_auth');
 
 const userSchema = new mongoose.Schema({
+
   name: {
     type: String,
     minlength: [2, 'Минимальная длина поля "name" - 2'],
@@ -46,7 +47,6 @@ userSchema.statics.findUserByCredentials = function (email, password) {
       if (!user) {
         return Promise.reject(new ErrorAuth('Неправильные почта или пароль 1'));
       }
-
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {

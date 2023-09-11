@@ -1,5 +1,5 @@
 const ServerError = (err, req, res, next) => {
-  console.error(`${err.message}: ошибка (${err.statusCode})`);
+  console.error(err);
   const { statusCode = 500, message } = err;
 
   res.status(statusCode).send({
