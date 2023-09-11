@@ -10,7 +10,7 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (error) {
-    return next(new ErrorAuth('Передан неверный логин или пароль2'));
+    return next(new ErrorAuth('Передан неверный логин или пароль'));
   }
 
   req.user = payload;
